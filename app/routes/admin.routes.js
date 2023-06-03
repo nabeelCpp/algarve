@@ -13,7 +13,11 @@ module.exports = function(app) {
   app.group("/api/admin", (router) => {
     router.use([authJwt.verifyToken, authJwt.isAdmin])
     router.get("/", adminController.adminPanel)
-    // members list
+    // Listings
+    router.post("/listings", validations.listingCreate, adminController.listings.create)
     router.get("/listings", adminController.listings.index)
+    router.get("/listings/(:id)", adminController.listings.index)
+    router.put("/listings/(:id)",validations.listingCreate, adminController.listings.update)
+    router.delete("/listings/(:id)", adminController.listings.delete)
   })
 }

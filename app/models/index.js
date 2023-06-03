@@ -27,4 +27,5 @@ db.Sequelize = Sequelize;
 db.sequelize = sequelize;
 
 db.Admin = require("./admin.model.js")(sequelize, Sequelize);
+db.Listings = require("./listings.model.js")(sequelize, Sequelize);
 module.exports = db;

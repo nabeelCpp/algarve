@@ -335,3 +335,29 @@ adminPanel.saveWithdrawalRequest = [
 ]
 
 exports.adminPanel = adminPanel;
+
+
+
+// Algarve
+exports.listingCreate = [
+    body('title', 'Title of listing is required').not().isEmpty(),
+    body('location', 'Location of listing is required').not().isEmpty(),
+    body('video_link', 'Video Link of listing is required').not().isEmpty(),
+    body('no_of_guests', 'No of guests is required').not().isEmpty(),
+    body('no_of_rooms', 'No of rooms is required').not().isEmpty(),
+    body('no_of_bath_rooms', 'No of baths is required').not().isEmpty(),
+    body('category', 'Category is required').not().isEmpty(),
+    body('city', 'City is required').not().isEmpty(),
+    body('country', 'Country is required').not().isEmpty(),
+    body('description', 'Description is required').not().isEmpty(),
+    body('rent', 'Rent is required').not().isEmpty(),
+    body('stay_type', 'Stay type is required').not().isEmpty(),
+    body('contact_number', 'Contact number of listing is required').not().isEmpty(),
+    (req, res, next) => {
+        const errors = validationResult(req);
+        if (!errors.isEmpty()) {
+            return res.status(400).json({ errors: errors.array() });
+        }
+        next();
+    }
+]

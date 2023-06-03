@@ -47,15 +47,15 @@ exports.currentDateTime = () => {
     return new Date().toISOString();
 }
 
-exports.packages = async (req, res) => {
-    let packages = await statusMaintenance.findAll({attributes: ['id', 'name', 'amount']});
-    return res.status(200).send(packages)
-}
+// exports.packages = async (req, res) => {
+//     let packages = await statusMaintenance.findAll({attributes: ['id', 'name', 'amount']});
+//     return res.status(200).send(packages)
+// }
 
-exports.vendorServices = async(req, res) => {
-    let services = await venderServices.findAll();
-    return res.status(200).send(services);
-}
+// exports.vendorServices = async(req, res) => {
+//     let services = await venderServices.findAll();
+//     return res.status(200).send(services);
+// }
 
 exports.makeid = async (length=10) => {
     let result = '';
