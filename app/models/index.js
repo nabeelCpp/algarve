@@ -28,4 +28,7 @@ db.sequelize = sequelize;
 
 db.Admin = require("./admin.model.js")(sequelize, Sequelize);
 db.Listings = require("./listings.model.js")(sequelize, Sequelize);
+db.Blogs = require("./blogs.model.js")(sequelize, Sequelize); 
+db.Gallery = require("./gallery.model.js")(sequelize, Sequelize); 
+db.City = require("./city.model.js")(sequelize, Sequelize); 
 module.exports = db;

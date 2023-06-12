@@ -344,8 +344,8 @@ exports.listingCreate = [
     body('location', 'Location of listing is required').not().isEmpty(),
     body('video_link', 'Video Link of listing is required').not().isEmpty(),
     body('no_of_guests', 'No of guests is required').not().isEmpty(),
-    body('no_of_rooms', 'No of rooms is required').not().isEmpty(),
-    body('no_of_bath_rooms', 'No of baths is required').not().isEmpty(),
+    body('no_of_pets', 'No of Pets is required').not().isEmpty(),
+    body('no_of_adults', 'No of adults is required').not().isEmpty(),
     body('category', 'Category is required').not().isEmpty(),
     body('city', 'City is required').not().isEmpty(),
     body('country', 'Country is required').not().isEmpty(),
@@ -353,6 +353,34 @@ exports.listingCreate = [
     body('rent', 'Rent is required').not().isEmpty(),
     body('stay_type', 'Stay type is required').not().isEmpty(),
     body('contact_number', 'Contact number of listing is required').not().isEmpty(),
+    (req, res, next) => {
+        const errors = validationResult(req);
+        if (!errors.isEmpty()) {
+            return res.status(400).json({ errors: errors.array() });
+        }
+        next();
+    }
+]
+
+exports.blogCreate = [
+    body('title', 'Title of blog is required').not().isEmpty(),
+    body('video_link', 'Video Link of blog is required').not().isEmpty(),
+    body('description', 'Description is required').not().isEmpty(),
+    (req, res, next) => {
+        const errors = validationResult(req);
+        if (!errors.isEmpty()) {
+            return res.status(400).json({ errors: errors.array() });
+        }
+        next();
+    }
+]
+
+
+exports.cityCreate = [
+    body('city', 'City name is required').not().isEmpty(),
+    body('lat', 'Latitude of city is required').not().isEmpty(),
+    body('lon', 'Longitude of city is required').not().isEmpty(),
+    body('country', 'Country is required').not().isEmpty(),
     (req, res, next) => {
         const errors = validationResult(req);
         if (!errors.isEmpty()) {

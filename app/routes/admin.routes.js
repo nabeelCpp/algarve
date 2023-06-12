@@ -19,5 +19,22 @@ module.exports = function(app) {
     router.get("/listings/(:id)", adminController.listings.index)
     router.put("/listings/(:id)",validations.listingCreate, adminController.listings.update)
     router.delete("/listings/(:id)", adminController.listings.delete)
+    router.put("/listings/gallery/(:id)", adminController.listings.updateGallery)
+
+    
+    // Blog
+    router.post("/blogs", validations.blogCreate, adminController.blogs.create)
+    router.get("/blogs", adminController.blogs.index)
+    router.get("/blogs/(:id)", adminController.blogs.index)
+    router.put("/blogs/(:id)",validations.blogCreate, adminController.blogs.update)
+    router.delete("/blogs/(:id)", adminController.blogs.delete)
+
+
+    // City
+    router.post("/city", validations.cityCreate, adminController.city.create)
+    router.get("/city", adminController.city.index)
+    router.get("/city/(:id)", adminController.city.index)
+    router.put("/city/(:id)",validations.cityCreate, adminController.city.update)
+    router.delete("/city/(:id)", adminController.city.delete)
   })
 }

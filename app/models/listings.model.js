@@ -31,11 +31,11 @@ module.exports = (sequelize, Sequelize) => {
             type: Sequelize.INTEGER, 
             allowNull: false
         },
-        no_of_rooms : {
+        no_of_pets : {
             type: Sequelize.INTEGER, 
             allowNull: false
         },
-        no_of_bath_rooms : {
+        no_of_adults : {
             type: Sequelize.INTEGER, 
             allowNull: false
         },
