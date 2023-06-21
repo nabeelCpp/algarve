@@ -11,7 +11,15 @@ exports.index = async (req, res) => {
     let data = []
     if(id) {
         let listing = await Listings.findByPk(id)
+        if(!listing){
+            let message = "No listing found"
+            return res.status(404).send({
+                success: false,
+                message: message
+            })
+        }
         listing = listing.getValues()
+        listing.features = listing.features?listing.features.split(','):[]
         let gallery = await Gallery.findAll({
             where: {
                 listing_id: id
@@ -23,17 +31,11 @@ exports.index = async (req, res) => {
         }
         listing = {...listing, gallery: gallery}
         data = listing
-        if(!data){
-            let message = "No listing found"
-            return res.status(404).send({
-                success: false,
-                message: message
-            })
-        }
     }else{
         let listings = await Listings.findAll()
         for (let i = 0; i < listings.length; i++) {
             const listing = listings[i].getValues()
+            listing.features = listing.features?listing.features.split(','):[]
             let gallery = await Gallery.findAll({
                 where: {
                     listing_id: listing.id
@@ -83,9 +85,9 @@ exports.create = async (req, res) => {
         country: body.country,
         location: body.location,
         video_link: body.video_link,
-        category_id: body.category,
+        category_id: body.category_id,
         description: body.description,
-        // features : [1,4,6],
+        features : body.features?.join(','),
         no_of_guests : body.no_of_guests,
         no_of_pets: body.no_of_pets,
         no_of_adults: body.no_of_adults,
@@ -121,9 +123,9 @@ exports.update = async (req, res) => {
         country: body.country,
         location: body.location,
         video_link: body.video_link,
-        category_id: body.category,
+        category_id: body.category_id,
         description: body.description,
-        // features : [1,4,6],
+        features : body.features?.join(','),
         no_of_guests : body.no_of_guests,
         no_of_pets: body.no_of_pets,
         no_of_adults: body.no_of_adults,
@@ -183,7 +185,6 @@ exports.updateGallery = async (req, res) => {
         })
     }
     const rootDirectory = path.resolve(__dirname);
-    console.log(rootDirectory);
     let galleryPath = `${rootDirectory}/../../../../public/listings/${listing.uid}/`
 
     
@@ -284,7 +285,92 @@ exports.updateGallery = async (req, res) => {
                 }
             });
         } else {
-            console.log(`Directory exists: ${galleryPath}`);
+            const storageGallery =   multer.diskStorage({  
+                destination:  (req, file, callback) => {  
+                  callback(null, galleryPath);
+                },
+                filename: (req, file, callback) => {
+                  callback(null, `${Date.now()}-${file.originalname}`);  
+                }
+            });
+            var uploadGallery = multer({ storage : storageGallery}).array('gallery');
+            let galleryMaxCount = 20;
+            uploadGallery(req,res,async (err) => {
+                if(req.files && req.files.length > galleryMaxCount){
+                    return res.status(203).send({
+                        success: false,
+                        message: `Max gallery upload limit is ${galleryMaxCount}`
+                    });
+                }
+                if(!req.files){
+                    return res.status(403).send({
+                        success: false,
+                        message: "Min 1 gallery image file is required!"
+                    })
+                } 
+                var invalidFileCollection = false;
+                req.files.forEach(file => {
+                    if(file.mimetype){
+                        const arr = file.mimetype.split('/');
+                        if(arr[0] !== 'image'){
+                            invalidFileCollection = true;
+                        }
+                    }
+                });
+                if(invalidFileCollection){
+                    return res.status(203).send({
+                        success: false,
+                        message: 'Invalid filetype. Only images are allowed'
+                    });
+                }
+                if(err) {
+                    return res.status(500).send({
+                        status: false,
+                        message: "Error uploading Gallery.",
+                        err: err
+                    });  
+                }
+                // Upload gallery one by one
+                const galleryFiles = [];
+                req.files.forEach(async (file) => {
+                    galleryFiles.push(file.filename);
+                });
+                galleryFiles.map(g => {
+                    Gallery.create({
+                        listing_id: listing.id,
+                        image: g
+                    })
+                })
+        
+                // let resp = await pocRegistration.update({file: galleryFiles.join(',')}, {
+                //     where: {
+                //         id: req.params.id
+                //     }
+                // });
+                // if(resp) {
+                //     // Delete old files.
+                //     const oldGallery = user.file.split(',');
+                //     oldGallery.forEach(old => {
+                //         fs.unlink(`${galleryPath}${old}`, function(err) {
+                //             if(err && err.code == 'ENOENT') {
+                //                 console.log("File doesn't exist, won't remove it.");
+                //             } else if (err) {
+                //                 console.error("Error occurred while trying to remove file");
+                //             } else {
+                //                 console.info(`removed`);
+                //             }
+                //         });
+                //     })
+                //     return res.status(200).send({
+                //         status: true,
+                //         message: "Gallery updated successfully!"
+                //     });  
+                // }
+                return res.status(200).send({
+                    success: true,
+                    message: "Gallery updated successfully!"
+                });
+            });
         }
     });
 }

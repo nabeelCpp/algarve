@@ -1,26 +1,14 @@
 module.exports = (sequelize, Sequelize) => {
-    const blogs = sequelize.define("blogs", {
+    const features = sequelize.define("features", {
         id : {
             type: Sequelize.INTEGER,
             allowNull: false,
             autoIncrement: true,
             primaryKey: true,
         },
-        title : {
+        name : {
             type: Sequelize.STRING, 
             allowNull: false
-        },
-        video_link : {
-            type: Sequelize.STRING, 
-            allowNull: false
-        },
-        description : {
-            type: Sequelize.TEXT, 
-            allowNull: false
-        },
-        image : {
-            type: Sequelize.STRING, 
-            allowNull: true
         },
         created_at : {
             type: 'TIMESTAMP',
@@ -29,14 +17,13 @@ module.exports = (sequelize, Sequelize) => {
         },
         updated_at : {
             type: 'TIMESTAMP',
-            
             allowNull: true
         },
         
     }, {
-      tableName: 'blogs',
+      tableName: 'features',
       timestamps: false
     });
   
-    return blogs;
+    return features;
   };

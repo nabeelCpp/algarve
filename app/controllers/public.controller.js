@@ -1,5 +1,5 @@
 const db = require("../models");
-const { Country, States, statusMaintenance, venderServices } = db;
+const { Country, States, User } = db;
 
 exports.index = async (req, res) => {
     return res.send({
@@ -79,4 +79,34 @@ exports.makeidNumeric = async (length=10) => {
       counter += 1;
     }
     return result;
+}
+
+exports.subscribe = async (req, res) => {
+    let body = req.body
+    let user = await User.findOne({
+        where: {
+            email: body.email
+        }
+    })
+    if(!user){
+        return res.status(500).send({
+            success: false,
+            message: "Signup to subscribe"
+        })
+    }
+    if(user.subscribed == 1){
+        return res.send({
+            success: true,
+            message: "User already subscribed"
+        })
+    }
+    User.update({subscribed: 1}, {
+        where: {
+            id: user.id
+        }
+    })
+    return res.send({
+        success: true,
+        message: "User subscribed successfully"
+    })
 }

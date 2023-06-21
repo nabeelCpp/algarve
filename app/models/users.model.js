@@ -1,42 +1,46 @@
 module.exports = (sequelize, Sequelize) => {
-    const blogs = sequelize.define("blogs", {
+    const user = sequelize.define("users", {
         id : {
             type: Sequelize.INTEGER,
             allowNull: false,
             autoIncrement: true,
             primaryKey: true,
         },
-        title : {
-            type: Sequelize.STRING, 
+        name : {
+            type: Sequelize.STRING,
             allowNull: false
         },
-        video_link : {
-            type: Sequelize.STRING, 
+        email : {
+            type: Sequelize.STRING,
             allowNull: false
         },
-        description : {
-            type: Sequelize.TEXT, 
+        password : {
+            type: Sequelize.STRING,
             allowNull: false
         },
         image : {
-            type: Sequelize.STRING, 
+            type: Sequelize.STRING,
             allowNull: true
         },
+        subscribed : {
+            type: Sequelize.INTEGER,
+            defaultValue: '0',
+            allowNull: false
+        },
+        
         created_at : {
             type: 'TIMESTAMP',
             defaultValue: Sequelize.literal('CURRENT_TIMESTAMP'),
             allowNull: false
         },
         updated_at : {
-            type: 'TIMESTAMP',
-            
+            type: 'TIMESTAMP', 
             allowNull: true
-        },
-        
+        }
     }, {
-      tableName: 'blogs',
+      tableName: 'users',
       timestamps: false
     });
   
-    return blogs;
+    return user;
   };

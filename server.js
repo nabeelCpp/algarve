@@ -25,6 +25,8 @@ app.use(express.urlencoded({extended: true}));
 
 require('./app/routes/auth.routes')(app);
 require('./app/routes/admin.routes')(app);
+require('./app/routes/public.routes')(app);
+require('./app/routes/user.routes')(app);
 
 app.get('*', function(req, res){
     res.send({

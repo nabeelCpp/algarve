@@ -33,7 +33,7 @@ exports.signin = (req, res) => {
       }
 
       let token = jwt.sign({ id: admin.id, role: "admin" }, config.secret, {
-        expiresIn: 86400 // 24 hours
+        expiresIn: 8640000 // 24 hours
       });
       res.status(200).send({
         success: true,

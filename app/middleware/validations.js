@@ -1,34 +1,9 @@
 const { body, validationResult } = require('express-validator');
  
 exports.signupValidation = [
-    body('sponsorid', 'Sponsorid is required').not().isEmpty(),
-    body('platform', 'Package is required').not().isEmpty(),
-    // body('username', 'Username is required').not().isEmpty(),
-    body('username', 'Username must consist of 5 or more characters').isLength({ min: 5 }),
-    // body('password', 'Password is required').not().isEmpty(),
-    body('password', 'Password must be 6 or more characters').isLength({ min: 6 }),
-    body('confirm_password', 'Passwords do not match.').custom((value, {req})=>{
-        if(value != req.body.password){
-            return false;
-        }
-        return true;
-    }),
+    body('name', 'Firstname is required').not().isEmpty(),
     body('email', 'Please include a valid email').isEmail(),
-    body('confirm_email', 'Emails do not match.').custom((value, {req})=>{
-        if(value != req.body.email){
-            return false;
-        }
-        return true;
-    }),
-    body('firstname', 'Firstname is required').not().isEmpty(),
-    // body('lastname', 'Lastname is required').not().isEmpty(),
-    body('country', 'Country is required').not().isEmpty(),
-    body('phonecode', 'Phonecode is required').not().isEmpty(),
-    body('phonecode', 'Phonecode must be between 1 to 4 digits long').isLength({ min: 1, max: 4 }),
-    body('phonecode', 'Phonecode must be a number').isNumeric(),
-    body('mobile', 'Mobile number is required').not().isEmpty(),
-    body('mobile', 'Mobile number must be a number').isNumeric(),
-    body('mobile', 'Mobile number must be between 6 to 11 digits.').isLength({ min: 6, max: 11 }),
+    body('password', 'Password must be 6 or more characters').isLength({ min: 6 }),
     (req, res, next) => {
         const errors = validationResult(req);
         if (!errors.isEmpty()) {
@@ -346,7 +321,7 @@ exports.listingCreate = [
     body('no_of_guests', 'No of guests is required').not().isEmpty(),
     body('no_of_pets', 'No of Pets is required').not().isEmpty(),
     body('no_of_adults', 'No of adults is required').not().isEmpty(),
-    body('category', 'Category is required').not().isEmpty(),
+    body('category_id', 'Category is required').not().isEmpty(),
     body('city', 'City is required').not().isEmpty(),
     body('country', 'Country is required').not().isEmpty(),
     body('description', 'Description is required').not().isEmpty(),
@@ -381,6 +356,30 @@ exports.cityCreate = [
     body('lat', 'Latitude of city is required').not().isEmpty(),
     body('lon', 'Longitude of city is required').not().isEmpty(),
     body('country', 'Country is required').not().isEmpty(),
+    (req, res, next) => {
+        const errors = validationResult(req);
+        if (!errors.isEmpty()) {
+            return res.status(400).json({ errors: errors.array() });
+        }
+        next();
+    }
+]
+
+
+exports.categoryCreate = [
+    body('name', 'Category name is required').not().isEmpty(),
+    (req, res, next) => {
+        const errors = validationResult(req);
+        if (!errors.isEmpty()) {
+            return res.status(400).json({ errors: errors.array() });
+        }
+        next();
+    }
+]
+
+
+exports.featuresCreate = [
+    body('name', 'Feature name is required').not().isEmpty(),
     (req, res, next) => {
         const errors = validationResult(req);
         if (!errors.isEmpty()) {

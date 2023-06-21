@@ -11,16 +11,16 @@ module.exports = function(app) {
     next();
   });
 
-//   app.post(
-//     "/api/auth/signup",
-//     [
-//       validations.signupValidation,
-//       verifySignUp.checkDuplicateUsernameOrEmailOrPhone
-//     ],
-//     controller.signup
-//   );
+  app.post(
+    "/api/auth/signup",
+    [
+      validations.signupValidation,
+      verifySignUp.checkDuplicateUsernameOrEmailOrPhone
+    ],
+    controller.signup
+  );
 
-//   app.post("/api/auth/signin", validations.loginValidation, controller.signin);
+  app.post("/api/auth/signin", validations.loginValidation, controller.signin);
   app.post("/api/admin/login", validations.adminPanelLogin, adminLoginController.signin);
 //   app.post("/api/franchisepanel/login",  validations.franchisePanelLogin, franchiseLoginController.signin);
 };

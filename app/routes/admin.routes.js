@@ -28,6 +28,7 @@ module.exports = function(app) {
     router.get("/blogs/(:id)", adminController.blogs.index)
     router.put("/blogs/(:id)",validations.blogCreate, adminController.blogs.update)
     router.delete("/blogs/(:id)", adminController.blogs.delete)
+    router.put("/blogs/image/(:id)", adminController.blogs.updateImage)
 
 
     // City
@@ -36,5 +37,18 @@ module.exports = function(app) {
     router.get("/city/(:id)", adminController.city.index)
     router.put("/city/(:id)",validations.cityCreate, adminController.city.update)
     router.delete("/city/(:id)", adminController.city.delete)
+
+    // Category
+    router.post("/category", validations.categoryCreate, adminController.category.create)
+    router.get("/category", adminController.category.index)
+    router.get("/category/(:id)", adminController.category.index)
+    router.put("/category/(:id)",validations.categoryCreate, adminController.category.update)
+    router.delete("/category/(:id)", adminController.category.delete)
+    // Features
+    router.post("/features", validations.featuresCreate, adminController.features.create)
+    router.get("/features", adminController.features.index)
+    router.get("/features/(:id)", adminController.features.index)
+    router.put("/features/(:id)",validations.featuresCreate, adminController.features.update)
+    router.delete("/features/(:id)", adminController.features.delete)
   })
 }
