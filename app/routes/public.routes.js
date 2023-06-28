@@ -22,5 +22,10 @@ module.exports = function(app) {
     router.get("/features", adminController.features.index)
     router.get("/category", adminController.category.index)
     router.get("/subscribe", publicController.subscribe)
+
+    // Pluralo APIs
+    router.get("/suppliers", adminController.pluralo.index)
+    router.get("/suppliers/(:id)", adminController.pluralo.products)
+    router.get("/suppliers/not-listed/(:id)", adminController.pluralo.productsNotListed)
   });
 };

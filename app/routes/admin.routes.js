@@ -21,6 +21,7 @@ module.exports = function(app) {
     router.delete("/listings/(:id)", adminController.listings.delete)
     router.put("/listings/gallery/(:id)", adminController.listings.updateGallery)
 
+
     
     // Blog
     router.post("/blogs", validations.blogCreate, adminController.blogs.create)

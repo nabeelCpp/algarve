@@ -55,7 +55,7 @@ module.exports = (sequelize, Sequelize) => {
             type: Sequelize.STRING, 
             allowNull: true
         },
-        description : {
+        long_description : {
             type: Sequelize.TEXT, 
             allowNull: false
         },
@@ -73,13 +73,41 @@ module.exports = (sequelize, Sequelize) => {
             type: Sequelize.INTEGER, 
             allowNull: false
         },
-        stay_type_id : {
-            type: Sequelize.INTEGER, 
+        stay_type : {
+            type: Sequelize.STRING, 
             allowNull: false
         },
         contact_number : {
             type: Sequelize.STRING, 
             allowNull: false
+        },
+        short_description : {
+            type: Sequelize.STRING, 
+            allowNull: true
+        },
+        additional_info : {
+            type: Sequelize.TEXT, 
+            allowNull: true
+        },
+        image_logo : {
+            type: Sequelize.STRING, 
+            allowNull: true
+        },
+        lat : {
+            type: Sequelize.STRING, 
+            allowNull: true
+        },
+        lon : {
+            type: Sequelize.STRING, 
+            allowNull: true
+        },
+        agent_id : {
+            type: Sequelize.INTEGER, 
+            allowNull: true
+        },
+        product_id : {
+            type: Sequelize.INTEGER, 
+            allowNull: true
         },
         created_at : {
             type: 'TIMESTAMP',

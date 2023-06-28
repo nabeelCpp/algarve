@@ -86,15 +86,23 @@ exports.create = async (req, res) => {
         location: body.location,
         video_link: body.video_link,
         category_id: body.category_id,
-        description: body.description,
         features : body.features?.join(','),
         no_of_guests : body.no_of_guests,
         no_of_pets: body.no_of_pets,
         no_of_adults: body.no_of_adults,
         rent: body.rent,
-        stay_type_id: body.stay_type,
-        contact_number: body.contact_number
+        stay_type: body.stay_type,
+        contact_number: body.contact_number,
+        lat: body.lat,
+        lon: body.lon,
+        short_description: body.short_description,
+        long_description:  body.long_description,
+        additional_info: body.additional_info, 
+        image_logo: body.image_logo,
+        agent_id: body.agent_id, 
+        product_id: body.product_id 
     }
+    console.log(createObj)
     try {
         let listing = await Listings.create(createObj)
         return res.send({
