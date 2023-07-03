@@ -51,5 +51,10 @@ module.exports = function(app) {
     router.get("/features/(:id)", adminController.features.index)
     router.put("/features/(:id)",validations.featuresCreate, adminController.features.update)
     router.delete("/features/(:id)", adminController.features.delete)
+
+    // Users
+    router.get("/users", adminController.users.index)
+    router.get("/subscribers", adminController.users.subscribers)
+
   })
 }
