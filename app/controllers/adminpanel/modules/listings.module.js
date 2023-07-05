@@ -27,7 +27,7 @@ exports.index = async (req, res) => {
         })
         for (let i = 0; i < gallery.length; i++) {
             const g = gallery[i].getValues();
-            g.image = `${process.env.SERVER_URL}/public/listings/${listing.uid}/${g.image}`
+            g.image = `${process.env.BASE_URL}/public/listings/${listing.uid}/${g.image}`
         }
         listing = {...listing, gallery: gallery}
         data = listing
@@ -43,7 +43,7 @@ exports.index = async (req, res) => {
             })
             for (let i = 0; i < gallery.length; i++) {
                 const g = gallery[i].getValues();
-                g.image = `${process.env.SERVER_URL}/public/listings/${listing.uid}/${g.image}`
+                g.image = `${process.env.BASE_URL}/public/listings/${listing.uid}/${g.image}`
             }
             data.push({...listing, gallery: gallery})
         }

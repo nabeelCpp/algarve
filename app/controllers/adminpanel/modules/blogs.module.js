@@ -18,12 +18,12 @@ exports.index = async (req, res) => {
             })
         }
         data = d.getValues()
-        data.image = data.image&&`${process.env.SERVER_URL}/public/blogs/${data.image}`
+        data.image = data.image&&`${process.env.BASE_URL}/public/blogs/${data.image}`
     }else{
         data = await Blogs.findAll()
         for (let i = 0; i < data.length; i++) {
             const d = data[i].getValues()
-            d.image = d.image&&`${process.env.SERVER_URL}/public/blogs/${d.image}`
+            d.image = d.image&&`${process.env.BASE_URL}/public/blogs/${d.image}`
         }
     }
     return res.send(data)
@@ -171,7 +171,7 @@ exports.updateImage = async (req, res) => {
             return res.status(200).send({
                 status: true,
                 message: "Blog cover updated successfully!",
-                image: req.file.filename&&`${process.env.SERVER_URL}/public/blogs/${req.file.filename}`
+                image: req.file.filename&&`${process.env.BASE_URL}/public/blogs/${req.file.filename}`
             });  
         }
         return res.status(500).send({

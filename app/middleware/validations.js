@@ -394,3 +394,66 @@ exports.featuresCreate = [
         next();
     }
 ]
+
+
+exports.subscribe = [
+    body('email', 'Email is required').not().isEmpty(),
+    (req, res, next) => {
+        const errors = validationResult(req);
+        if (!errors.isEmpty()) {
+            return res.status(400).json({ errors: errors.array() });
+        }
+        next();
+    }
+]
+
+
+exports.listingAvailability = [
+    body('SupplierId', 'SupplierId is required').not().isEmpty(),
+    body('ProductId', 'ProductId is required').not().isEmpty(),
+    body('date', 'Date is required').not().isEmpty(),
+    (req, res, next) => {
+        const errors = validationResult(req);
+        if (!errors.isEmpty()) {
+            return res.status(400).json({ errors: errors.array() });
+        }
+        next();
+    }
+]
+
+exports.listingAvailabilityPerEventId = [
+    body('SupplierId', 'SupplierId is required').not().isEmpty(),
+    (req, res, next) => {
+        const errors = validationResult(req);
+        if (!errors.isEmpty()) {
+            return res.status(400).json({ errors: errors.array() });
+        }
+        next();
+    }
+]
+
+exports.preBookingEvent = [
+    body('Adults', 'No of Adults is required').not().isEmpty(),
+    (req, res, next) => {
+        const errors = validationResult(req);
+        if (!errors.isEmpty()) {
+            return res.status(400).json({ errors: errors.array() });
+        }
+        next();
+    }
+]
+
+exports.bookingEvent = [
+    body('BookingOperatorCode', 'BookingOperatorCode is required').not().isEmpty(),
+    body('TravelerFirstName', 'Traveler FirstName is required').not().isEmpty(),
+    // body('TravelerLastName', 'Traveler LastName is required').not().isEmpty(),
+    body('TravelerEmail', 'Traveler Email is required').not().isEmpty(),
+    body('TravelerPhone', 'Traveler Phone is required').not().isEmpty(),
+    (req, res, next) => {
+        const errors = validationResult(req);
+        if (!errors.isEmpty()) {
+            return res.status(400).json({ errors: errors.array() });
+        }
+        next();
+    }
+]
