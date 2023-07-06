@@ -159,6 +159,7 @@ exports.bookingEvent = async (req, res) => {
         let Data = responseData.Data
         let insertBooking = {
             BookingNumber: Data.BookingNumber,
+            userId: req.user.id,
             TicketNumber: Data.TicketNumber,
             PaxTotal: Data.PaxTotal,
             BillingTotal: Data.BillingTotal,

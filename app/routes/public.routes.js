@@ -34,8 +34,7 @@ module.exports = function(app) {
 
     // Pre booking for listing
     router.put("/listings/prebooking/(:event_id)", validations.preBookingEvent, adminController.pluralo.preBookingEvent)
-    // Booking
-    router.put("/listings/booking/(:ref_id)", validations.bookingEvent, adminController.pluralo.bookingEvent)
+    
 
 
   });

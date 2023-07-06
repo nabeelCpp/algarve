@@ -1,6 +1,6 @@
 const { authJwt, validations } = require("../middleware");
 const userController = require("../controllers/user.controller");
-// const adminController = require("../controllers/admin.controller");
+const adminController = require("../controllers/admin.controller");
 
 module.exports = function(app) {
   app.use(function(req, res, next) {
@@ -17,5 +17,12 @@ module.exports = function(app) {
     router.get("/listing/subscribe/(:id)", userController.dashboard.subscribeListing);
     router.get("/listing/unsubscribe/(:id)", userController.dashboard.unSubscribeListing);
     router.get("/listing/subscribed", userController.dashboard.subscribedListings);
+
+    // Booking For pluralo
+    router.put("/listings/booking/(:ref_id)", validations.bookingEvent, adminController.pluralo.bookingEvent)
+    // fetch all bookings
+    router.get("/bookings", userController.profile.bookings);
+    router.put("/bookings/(:id)", userController.profile.singleBooking);
+
   });
 };

@@ -6,6 +6,10 @@ module.exports = (sequelize, Sequelize) => {
             autoIncrement: true,
             primaryKey: true,
         },
+        userId : {
+            type: Sequelize.INTEGER, 
+            allowNull: false
+        },
         BookingNumber : {
             type: Sequelize.STRING, 
             allowNull: false
