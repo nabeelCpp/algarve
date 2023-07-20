@@ -457,3 +457,14 @@ exports.bookingEvent = [
         next();
     }
 ]
+
+exports.stripeValidation = [
+    body('amount', 'Amount must be greater than 0').isFloat({gt: 0}),
+    (req, res, next) => {
+        const errors = validationResult(req);
+        if (!errors.isEmpty()) {
+            return res.status(400).json({ errors: errors.array() });
+        }
+        next();
+    }
+]

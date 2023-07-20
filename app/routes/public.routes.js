@@ -1,6 +1,7 @@
 const publicController = require("../controllers/public.controller");
 const adminController = require("../controllers/admin.controller")
 const listingController = require("../controllers/listings.controller")
+const stripeController = require("../controllers/stripe.controller")
 const { validations } = require("../middleware")
 module.exports = function(app) {
   app.use(function(req, res, next) {
@@ -34,7 +35,10 @@ module.exports = function(app) {
 
     // Pre booking for listing
     router.put("/listings/prebooking/(:event_id)", validations.preBookingEvent, adminController.pluralo.preBookingEvent)
-    
+   
+    // Stripe payment endpoints
+    router.post("/stripe/intialize", validations.stripeValidation, stripeController.intialize) 
+
 
 
   });
