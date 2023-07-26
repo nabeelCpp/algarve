@@ -449,6 +449,7 @@ exports.bookingEvent = [
     // body('TravelerLastName', 'Traveler LastName is required').not().isEmpty(),
     body('TravelerEmail', 'Traveler Email is required').not().isEmpty(),
     body('TravelerPhone', 'Traveler Phone is required').not().isEmpty(),
+    body('ListingId', 'Listing id is required').not().isEmpty(),
     (req, res, next) => {
         const errors = validationResult(req);
         if (!errors.isEmpty()) {

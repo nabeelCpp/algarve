@@ -38,6 +38,15 @@ module.exports = (sequelize, Sequelize) => {
             type: Sequelize.TEXT, 
             allowNull: false
         },
+        status: {
+            type: Sequelize.INTEGER, 
+            defaultValue: '1',
+            allowNull: false
+        },
+        ListingId: {
+            type: Sequelize.INTEGER,
+            allowNull: false
+        },
         created_at : {
             type: 'TIMESTAMP',
             defaultValue: Sequelize.literal('CURRENT_TIMESTAMP'),

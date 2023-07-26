@@ -20,6 +20,9 @@ module.exports = function(app) {
 
     // Booking For pluralo
     router.put("/listings/booking/(:ref_id)", validations.bookingEvent, adminController.pluralo.bookingEvent)
+    // Cancel booking for pluralo
+    router.delete("/listings/booking/(:ref_id)", adminController.pluralo.cancelBooking)
+
     // fetch all bookings
     router.get("/bookings", userController.profile.bookings);
     router.put("/bookings/(:id)", userController.profile.singleBooking);

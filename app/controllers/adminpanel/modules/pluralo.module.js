@@ -165,7 +165,8 @@ exports.bookingEvent = async (req, res) => {
             BillingTotal: Data.BillingTotal,
             BookingOperatorCode: Data.BookingOperatorCode,
             EventDate: Data.EventDate,
-            CancelationPolicyDate: Data.CancelationPolicyDate
+            CancelationPolicyDate: Data.CancelationPolicyDate,
+            ListingId: body.ListingId
         }
         Booking.create(insertBooking)
         return res.send({
@@ -173,6 +174,42 @@ exports.bookingEvent = async (req, res) => {
             message: "Booking created successfully.",
             data: insertBooking
         })
+    }).catch(err => {
+        return res.status(503).send({success: false, message: err.response.data.Data.ErrorMessage})
+    })
+}
+
+exports.cancelBooking = async (req, res) => {
+    let referenceId = req.params.ref_id
+    let data = {
+        "BookingReference": referenceId,
+    }
+    axios.post(`${process.env.PLURALO_URL}/integration/v1/book/Cancel`, data, {
+        headers: {
+          "apiKey": process.env.PLURALO_API_KEY
+        }
+    }).then(async (response) => {
+        let responseData = response.data
+        let Data = responseData.Data
+
+        if(responseData.Success){
+            await Booking.update({status: 0}, {
+                where: {
+                    BookingNumber: referenceId
+                }
+            })
+            return res.send({
+                success: true,
+                message: "Booking Cancelled successfully.",
+                data: Data
+            })
+        }else{
+            return res.send({
+                success: false,
+                message: "Error while cancelling booking.",
+                data: Data
+            })
+        }
     }).catch(err => {
         return res.status(503).send({success: false, message: err.response.data.Data.ErrorMessage})
     })

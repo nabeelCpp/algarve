@@ -1,6 +1,6 @@
 const db = require('../../../models');
 const Op = db.Sequelize.Op;
-const {Admin, Listings, Gallery} = db;
+const {Admin, Listings, Gallery, Category} = db;
 const publicController = require("../../public.controller");
 const multer = require("multer");
 const fs = require('fs');
@@ -45,6 +45,8 @@ exports.index = async (req, res) => {
                 const g = gallery[i].getValues();
                 g.image = `${process.env.BASE_URL}/public/listings/${listing.uid}/${g.image}`
             }
+            let category = await Category.findByPk(listing.category_id)
+            listing.category = category
             data.push({...listing, gallery: gallery})
         }
         

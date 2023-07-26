@@ -18,6 +18,14 @@ exports.bookings = async (req, res) => {
             userId: user.id
         }
     })
+    for (let i = 0; i < bookings.length; i++) {
+        const booking = bookings[i].getValues();
+        if(booking.ListingId){
+            let listing = await Listings.findByPk(booking.ListingId);
+            booking.listing = listing
+        }
+        
+    }
     return res.send(bookings)
 }
 exports.singleBooking = async (req, res) => {
