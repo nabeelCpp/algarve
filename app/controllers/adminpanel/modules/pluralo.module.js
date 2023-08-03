@@ -109,10 +109,9 @@ exports.preBookingEvent = async (req, res) => {
     let adults = req.body.Adults
     let children = req.body.Children?req.body.Children:0
     let random = await publicController.makeid(8)
-    let data = {
-        "EventId": eventId,
-        "BookingOperatorCode": `${process.env.PLURALO_PREFIX}${random}`,
-        "Audiences": [
+    let audiences = []
+    if(children > 0){
+        audiences = [
             {
                 "AudienceType": "ADULT",
                 "Quantity": adults
@@ -122,6 +121,18 @@ exports.preBookingEvent = async (req, res) => {
                 "Quantity": children
             }
         ]
+    }else{
+        audiences = [
+            {
+                "AudienceType": "ADULT",
+                "Quantity": adults
+            }
+        ]
+    }
+    let data = {
+        "EventId": eventId,
+        "BookingOperatorCode": `${process.env.PLURALO_PREFIX}${random}`,
+        "Audiences": audiences
     }
     axios.post(`${process.env.PLURALO_URL}/integration/v1/book/prebook`, data, {
         headers: {

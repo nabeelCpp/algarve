@@ -1,6 +1,6 @@
 const db = require('../../../models');
 const Op = db.Sequelize.Op;
-const {User, Booking} = db;
+const {User, Booking, Listings} = db;
 // const publicController = require("../../public.controller");
 // const multer = require("multer");
 // const fs = require('fs');
@@ -38,4 +38,21 @@ exports.singleBooking = async (req, res) => {
         }
     })
     return res.send(booking)
+}
+
+exports.removeSubscribe = async (req, res) => {
+    let user = req.user
+    if(user.subscribed == 1){
+        await User.update({subscribed: 0}, {
+            where: {
+                id: user.id
+            }
+        })
+        user.subscribed = 0
+    }
+    return res.send({
+        success: true,
+        message: "User un-subscribed successfully",
+        data: user
+    })
 }

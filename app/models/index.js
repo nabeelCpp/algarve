@@ -36,4 +36,5 @@ db.Features = require("./features.model.js")(sequelize, Sequelize);
 db.User = require("./users.model.js")(sequelize, Sequelize); 
 db.SavedListing = require("./saved_listings.model.js")(sequelize, Sequelize); 
 db.Booking = require("./booking.model.js")(sequelize, Sequelize); 
+db.ContactQuery = require("./contactQuery.model.js")(sequelize, Sequelize); 
 module.exports = db;

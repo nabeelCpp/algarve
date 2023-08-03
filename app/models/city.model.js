@@ -21,6 +21,10 @@ module.exports = (sequelize, Sequelize) => {
         country : {
             type: Sequelize.STRING, 
             allowNull: false
+        },
+        iso2 : {
+            type: Sequelize.STRING, 
+            allowNull: false
         }
         
     }, {

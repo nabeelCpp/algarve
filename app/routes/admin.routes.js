@@ -1,5 +1,6 @@
 const { authJwt, validations } = require("../middleware")
 const adminController = require("../controllers/admin.controller")
+const publicController = require("../controllers/public.controller")
 
 module.exports = function(app) {
   app.use(function(req, res, next) {
@@ -54,7 +55,13 @@ module.exports = function(app) {
 
     // Users
     router.get("/users", adminController.users.index)
+    router.delete("/users/(:id)", adminController.users.delete)
     router.get("/subscribers", adminController.users.subscribers)
+
+    // Contact messages
+    router.get("/contact-us", publicController.allContactMessages)
+    router.put("/contact-us/(:id)", publicController.changeMessageStatus)
+    router.delete("/contact-us/(:id)", publicController.deleteMessage)
 
   })
 }

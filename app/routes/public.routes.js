@@ -18,7 +18,7 @@ module.exports = function(app) {
 
     router.get("/listings", adminController.listings.index)
     router.get("/listings/(:id)", adminController.listings.index)
-    router.get("/listing/filter", listingController.filter)
+    // router.get("/listing/filter", listingController.filter)
     router.get("/listing/search", listingController.search)
 
     router.get("/features", adminController.features.index)
@@ -39,7 +39,11 @@ module.exports = function(app) {
     // Stripe payment endpoints
     router.post("/stripe/intialize", validations.stripeValidation, stripeController.intialize) 
 
-
-
+    // Get all locations from database.
+    router.get("/city", adminController.city.index)
+    // Filter listings based on dates and location
+    router.put("/listings/filter/(:location_id)", validations.filterListing, listingController.filter)
+    // Contact form save 
+    router.post("/contact-us/", validations.contactForm, publicController.contactForm)
   });
 };

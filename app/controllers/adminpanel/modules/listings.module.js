@@ -1,6 +1,6 @@
 const db = require('../../../models');
 const Op = db.Sequelize.Op;
-const {Admin, Listings, Gallery, Category} = db;
+const {Admin, Listings, Gallery, Category, City} = db;
 const publicController = require("../../public.controller");
 const multer = require("multer");
 const fs = require('fs');
@@ -27,8 +27,13 @@ exports.index = async (req, res) => {
         })
         for (let i = 0; i < gallery.length; i++) {
             const g = gallery[i].getValues();
-            g.image = `${process.env.BASE_URL}/public/listings/${listing.uid}/${g.image}`
+            g.image = `${process.env.BASE_URL}/listings/${listing.uid}/${g.image}`
         }
+        let location = []
+        if(listing.location_id){
+            location = await City.findByPk(listing.location_id)
+        }
+        listing.location = location
         listing = {...listing, gallery: gallery}
         data = listing
     }else{
@@ -43,10 +48,15 @@ exports.index = async (req, res) => {
             })
             for (let i = 0; i < gallery.length; i++) {
                 const g = gallery[i].getValues();
-                g.image = `${process.env.BASE_URL}/public/listings/${listing.uid}/${g.image}`
+                g.image = `${process.env.BASE_URL}/listings/${listing.uid}/${g.image}`
             }
             let category = await Category.findByPk(listing.category_id)
             listing.category = category
+            let location = []
+            if(listing.location_id){
+                location = await City.findByPk(listing.location_id)
+            }
+            listing.location = location
             data.push({...listing, gallery: gallery})
         }
         
@@ -102,9 +112,9 @@ exports.create = async (req, res) => {
         additional_info: body.additional_info, 
         image_logo: body.image_logo,
         agent_id: body.agent_id, 
-        product_id: body.product_id 
+        product_id: body.product_id,
+        location_id: body.location_id
     }
-    console.log(createObj)
     try {
         let listing = await Listings.create(createObj)
         return res.send({
@@ -141,7 +151,8 @@ exports.update = async (req, res) => {
         no_of_adults: body.no_of_adults,
         rent: body.rent,
         stay_type_id: body.stay_type,
-        contact_number: body.contact_number
+        contact_number: body.contact_number,
+        location_id: body.location_id
     }
     try {
         let listing = await Listings.update(updateObj, {
@@ -196,6 +207,7 @@ exports.updateGallery = async (req, res) => {
     }
     const rootDirectory = path.resolve(__dirname);
     let galleryPath = `${rootDirectory}/../../../../public/listings/${listing.uid}/`
+    console.log(galleryPath);
 
     
     // Check if the directory exists

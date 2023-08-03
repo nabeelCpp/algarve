@@ -26,6 +26,8 @@ module.exports = function(app) {
     // fetch all bookings
     router.get("/bookings", userController.profile.bookings);
     router.put("/bookings/(:id)", userController.profile.singleBooking);
+    // Remove subscriber
+    router.delete("/subscribe", userController.profile.removeSubscribe)
 
   });
 };

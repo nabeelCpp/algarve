@@ -333,6 +333,7 @@ exports.listingCreate = [
     body('lon', 'Longitude is required').not().isEmpty(),
     body('rent', 'Rent is required').not().isEmpty(),
     body('stay_type', 'Stay type is required').not().isEmpty(),
+    body('location_id', 'Location is required').not().isEmpty(),
     body('contact_number', 'Contact number of listing is required').not().isEmpty(),
     (req, res, next) => {
         const errors = validationResult(req);
@@ -461,6 +462,32 @@ exports.bookingEvent = [
 
 exports.stripeValidation = [
     body('amount', 'Amount must be greater than 0').isFloat({gt: 0}),
+    (req, res, next) => {
+        const errors = validationResult(req);
+        if (!errors.isEmpty()) {
+            return res.status(400).json({ errors: errors.array() });
+        }
+        next();
+    }
+]
+
+
+exports.filterListing = [
+    body('checkin', 'Date in is required').not().isEmpty(),
+    body('checkout', 'Date out is required').not().isEmpty(),
+    (req, res, next) => {
+        const errors = validationResult(req);
+        if (!errors.isEmpty()) {
+            return res.status(400).json({ errors: errors.array() });
+        }
+        next();
+    }
+]
+
+exports.contactForm = [
+    body('name', 'Name is required').not().isEmpty(),
+    body('email', 'Please include a valid email').isEmail(),
+    body('message', 'Message is required').not().isEmpty(),
     (req, res, next) => {
         const errors = validationResult(req);
         if (!errors.isEmpty()) {

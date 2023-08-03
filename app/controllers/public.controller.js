@@ -1,5 +1,5 @@
 const db = require("../models");
-const { Country, States, User } = db;
+const { Country, States, User, ContactQuery } = db;
 
 exports.index = async (req, res) => {
     return res.send({
@@ -109,4 +109,63 @@ exports.subscribe = async (req, res) => {
         success: true,
         message: "User subscribed successfully"
     })
+}
+
+exports.contactForm = async (req, res) => {
+    try {
+        let body = req.body
+        ContactQuery.create({
+            name: body.name, 
+            email: body.email,
+            message: body.message
+        })
+        return res.send({
+            success: true,
+            message: "Form submitted successfully!"
+        })
+    } catch (error) {
+        return this.errorHandlingFunc(req, res, error.message);
+    }
+}
+
+exports.allContactMessages = async (req, res) => {
+    let messages = await ContactQuery.findAll();
+    return res.send(messages)
+}
+
+exports.changeMessageStatus = async (req, res) => {
+    let id = req.params.id
+    let body = req.body
+    try {
+        let updateObj = {status: body.status}
+        await ContactQuery.update(updateObj, {
+            where: {
+                id: id
+            }
+        })
+        return res.send({
+            success: true,
+            message: "Message Status updated successfully!",     
+        })
+    } catch (error) {
+        return this.errorHandlingFunc(req, res, error.message);
+    }
+}
+
+// Delete Message
+exports.deleteMessage = async (req, res) => {
+    let id = req.params.id
+    try {
+        await ContactQuery.destroy({
+            where: {
+                id: id
+            }
+        })
+        return res.send({
+            success: true,
+            message: "Message Deleted successfully!",     
+        })
+    } catch (error) {
+        return this.errorHandlingFunc(req, res, error.message);
+    }
 }

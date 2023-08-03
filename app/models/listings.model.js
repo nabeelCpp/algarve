@@ -101,6 +101,10 @@ module.exports = (sequelize, Sequelize) => {
             type: Sequelize.STRING, 
             allowNull: true
         },
+        location_id : {
+            type: Sequelize.INTEGER, 
+            allowNull: true
+        },
         agent_id : {
             type: Sequelize.INTEGER, 
             allowNull: true

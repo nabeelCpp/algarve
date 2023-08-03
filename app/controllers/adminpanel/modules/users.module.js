@@ -9,6 +9,23 @@ exports.index = async (req, res) => {
     return res.send(users)
 }
 
+exports.delete = async (req, res) => {
+    let id = req.params.id
+    try {
+        await User.destroy({
+            where: {
+                id: id
+            }
+        })
+        return res.send({
+            success: true,
+            message: "User Deleted successfully!",     
+        })
+    } catch (error) {
+        return publicController.errorHandlingFunc(req, res, error.message);
+    }
+}
+
 exports.subscribers = async (req, res) => {
     let users = await User.findAll({
         where: {
