@@ -57,6 +57,7 @@ module.exports = function(app) {
     router.get("/users", adminController.users.index)
     router.delete("/users/(:id)", adminController.users.delete)
     router.get("/subscribers", adminController.users.subscribers)
+    router.delete("/subscriber/(:id)", adminController.users.removeSubscriber)
 
     // Contact messages
     router.get("/contact-us", publicController.allContactMessages)

@@ -34,3 +34,31 @@ exports.subscribers = async (req, res) => {
     })
     return res.send(users)
 }
+
+
+exports.removeSubscriber = async (req, res) => {
+    let id = req.params.id
+    let user = await User.findByPk(id)
+    if(!user) {
+        return res.status(404).send( {
+            success: false,
+            message: "User not found"
+        })
+    }
+    if(user.subscribed == 1){
+        await User.update({subscribed: 0}, {
+            where: {
+                id: user.id
+            }
+        })
+        return res.send({
+            success: true,
+            message: `User ${user.name} removed as subscriber successfully`,
+        })
+    }else {
+        return res.status(501).send({
+            success: false,
+            message: "Already not a subscriber"
+        })
+    }
+}

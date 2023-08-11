@@ -24,7 +24,7 @@ module.exports = (sequelize, Sequelize) => {
         },
         iso2 : {
             type: Sequelize.STRING, 
-            allowNull: false
+            allowNull: true
         }
         
     }, {
