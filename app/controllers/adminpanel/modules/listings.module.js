@@ -33,7 +33,7 @@ exports.index = async (req, res) => {
         if(listing.location_id){
             location = await City.findByPk(listing.location_id)
         }
-        listing.location = location
+        listing.location_details = location
         listing = {...listing, gallery: gallery}
         data = listing
     }else{
@@ -56,7 +56,7 @@ exports.index = async (req, res) => {
             if(listing.location_id){
                 location = await City.findByPk(listing.location_id)
             }
-            listing.location = location
+            listing.location_details = location
             data.push({...listing, gallery: gallery})
         }
         
@@ -127,6 +127,103 @@ exports.create = async (req, res) => {
     }
 }
 
+
+exports.createFreeListing = async (req, res) => {
+    let body = req.body
+    // check category id
+
+    // check stay_type_id
+
+    // check features
+
+    // make object for saving to listings
+
+    // generate UID
+    let uid = await checkUid()
+    // make logic for checking uid
+    let createObj = {
+        uid: uid,
+        title: body.title,
+        city: body.city,
+        country: body.country,
+        location: body.location,
+        video_link: body.video_link,
+        category_id: body.category_id,
+        features : body.features?.join(','),
+        no_of_guests : body.no_of_guests,
+        no_of_pets: body.no_of_pets,
+        no_of_adults: body.no_of_adults,
+        rent: body.rent,
+        stay_type: body.stay_type,
+        contact_number: body.contact_number,
+        lat: body.lat,
+        lon: body.lon,
+        short_description: body.short_description,
+        long_description:  body.long_description,
+        additional_info: body.additional_info, 
+        // image_logo: body.image_logo,
+        // agent_id: body.agent_id, 
+        // product_id: body.product_id,
+        location_id: body.location_id,
+        is_free: 1
+    }
+    try {
+        let listing = await Listings.create(createObj)
+        return res.send({
+            success: true,
+            message: "Free Listing created successfully!",
+            data: listing        
+        })
+    } catch (error) {
+        return publicController.errorHandlingFunc(req, res, error.message);
+    }
+}
+
+exports.updateFreeListing = async (req, res) => {
+    let id = req.params.id
+    let body = req.body
+    let listing = await Listings.findByPk(id)
+    if(!listing) {
+        return res.send({
+            success: false,
+            message: "Listing not found"
+        })
+    }
+    let updateObj = {
+        title: body.title,
+        city: body.city,
+        country: body.country,
+        location: body.location,
+        video_link: body.video_link,
+        category_id: body.category_id,
+        description: body.description,
+        features : body.features?.join(','),
+        no_of_guests : body.no_of_guests,
+        no_of_pets: body.no_of_pets,
+        no_of_adults: body.no_of_adults,
+        // rent: body.rent,
+        stay_type_id: body.stay_type,
+        contact_number: body.contact_number,
+        location_id: body.location_id,
+        // image_logo: body.image_logo,
+        // agent_id: body.agent_id, 
+        // product_id: body.product_id
+    }
+    try {
+        let listing = await Listings.update(updateObj, {
+            where: {
+                id: id
+            }
+        })
+        return res.send({
+            success: true,
+            message: "Listing updated successfully!",        
+        })
+    } catch (error) {
+        return publicController.errorHandlingFunc(req, res, error.message);
+    }
+}
+
 exports.update = async (req, res) => {
     let id = req.params.id
     let body = req.body
@@ -152,7 +249,10 @@ exports.update = async (req, res) => {
         rent: body.rent,
         stay_type_id: body.stay_type,
         contact_number: body.contact_number,
-        location_id: body.location_id
+        location_id: body.location_id,
+        image_logo: body.image_logo,
+        agent_id: body.agent_id, 
+        product_id: body.product_id
     }
     try {
         let listing = await Listings.update(updateObj, {

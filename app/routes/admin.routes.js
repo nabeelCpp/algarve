@@ -16,9 +16,11 @@ module.exports = function(app) {
     router.get("/", adminController.adminPanel)
     // Listings
     router.post("/listings", validations.listingCreate, adminController.listings.create)
+    router.post("/listings/free", validations.listingCreateFree, adminController.listings.createFreeListing)
     router.get("/listings", adminController.listings.index)
     router.get("/listings/(:id)", adminController.listings.index)
     router.put("/listings/(:id)",validations.listingCreate, adminController.listings.update)
+    router.put("/listings/free/(:id)",validations.listingCreateFree, adminController.listings.updateFreeListing)
     router.delete("/listings/(:id)", adminController.listings.delete)
     router.put("/listings/gallery/(:id)", adminController.listings.updateGallery)
 

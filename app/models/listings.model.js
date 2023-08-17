@@ -71,7 +71,7 @@ module.exports = (sequelize, Sequelize) => {
         },
         rent : {
             type: Sequelize.INTEGER, 
-            allowNull: false
+            allowNull: true
         },
         stay_type : {
             type: Sequelize.STRING, 
@@ -112,6 +112,11 @@ module.exports = (sequelize, Sequelize) => {
         product_id : {
             type: Sequelize.INTEGER, 
             allowNull: true
+        },
+        is_free : {
+            type: Sequelize.INTEGER,
+            defaultValue: '0', 
+            allowNull: false
         },
         created_at : {
             type: 'TIMESTAMP',

@@ -324,6 +324,7 @@ exports.listingCreate = [
     body('category_id', 'Category is required').not().isEmpty(),
     body('city', 'City is required').not().isEmpty(),
     body('country', 'Country is required').not().isEmpty(),
+    body('video_link', 'View link is required').not().isEmpty(),
     // body('long_description', 'Long Description is required').not().isEmpty(),
     // body('short_description', 'Short Description is required').not().isEmpty(),
     // body('additional_info', 'Additional information is required').not().isEmpty(),
@@ -332,6 +333,38 @@ exports.listingCreate = [
     body('lat', 'Latitude is required').not().isEmpty(),
     body('lon', 'Longitude is required').not().isEmpty(),
     body('rent', 'Rent is required').not().isEmpty(),
+    body('stay_type', 'Stay type is required').not().isEmpty(),
+    body('location_id', 'Location is required').not().isEmpty(),
+    body('contact_number', 'Contact number of listing is required').not().isEmpty(),
+    (req, res, next) => {
+        const errors = validationResult(req);
+        if (!errors.isEmpty()) {
+            return res.status(400).json({ errors: errors.array() });
+        }
+        next();
+    }
+]
+
+
+exports.listingCreateFree = [
+    body('title', 'Title of listing is required').not().isEmpty(),
+    body('location', 'Location of listing is required').not().isEmpty(),
+    body('video_link', 'Video Link of listing is required').not().isEmpty(),
+    body('no_of_guests', 'No of guests is required').not().isEmpty(),
+    body('no_of_pets', 'No of Pets is required').not().isEmpty(),
+    body('no_of_adults', 'No of adults is required').not().isEmpty(),
+    body('category_id', 'Category is required').not().isEmpty(),
+    body('city', 'City is required').not().isEmpty(),
+    body('country', 'Country is required').not().isEmpty(),
+    body('video_link', 'View link is required').not().isEmpty(),
+    // body('long_description', 'Long Description is required').not().isEmpty(),
+    // body('short_description', 'Short Description is required').not().isEmpty(),
+    // body('additional_info', 'Additional information is required').not().isEmpty(),
+    // body('agent_id', 'Agent Id is required').not().isEmpty(),
+    // body('product_id', 'Product Id is required').not().isEmpty(),
+    body('lat', 'Latitude is required').not().isEmpty(),
+    body('lon', 'Longitude is required').not().isEmpty(),
+    // body('rent', 'Rent is required').not().isEmpty(),
     body('stay_type', 'Stay type is required').not().isEmpty(),
     body('location_id', 'Location is required').not().isEmpty(),
     body('contact_number', 'Contact number of listing is required').not().isEmpty(),
