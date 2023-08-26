@@ -70,7 +70,7 @@ exports.search = async (req, res) => {
                     }
                 },
                 {
-                    description: {
+                    long_description: {
                         [Op.like]: `%${search}%`
                     }
                 }

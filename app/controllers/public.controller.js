@@ -1,5 +1,5 @@
 const db = require("../models");
-const { Country, States, User, ContactQuery } = db;
+const { Country, States, User, ContactQuery, Subscribe } = db;
 
 exports.index = async (req, res) => {
     return res.send({
@@ -83,32 +83,29 @@ exports.makeidNumeric = async (length=10) => {
 
 exports.subscribe = async (req, res) => {
     let body = req.body
-    let user = await User.findOne({
-        where: {
-            email: body.email
-        }
-    })
-    if(!user){
-        return res.status(500).send({
-            success: false,
-            message: "Signup to subscribe"
+    try {
+        let user = await Subscribe.findOne({
+            where: {
+                email: body.email
+            }
         })
-    }
-    if(user.subscribed == 1){
+        if(user){
+            return res.status(500).send({
+                success: false,
+                message: "Email Already Subscribed"
+            })
+        }
+    
+        Subscribe.create({
+            email: body.email,
+        })
         return res.send({
             success: true,
-            message: "User already subscribed"
+            message: "User subscribed successfully"
         })
+    } catch (err) {
+        return res.status(503).send({success: false, message: err.response.data.Data.ErrorMessage})
     }
-    User.update({subscribed: 1}, {
-        where: {
-            id: user.id
-        }
-    })
-    return res.send({
-        success: true,
-        message: "User subscribed successfully"
-    })
 }
 
 exports.contactForm = async (req, res) => {

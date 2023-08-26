@@ -205,6 +205,10 @@ exports.updateFreeListing = async (req, res) => {
         stay_type_id: body.stay_type,
         contact_number: body.contact_number,
         location_id: body.location_id,
+        location_id: body.location_id,
+        short_description: body.short_description,
+        long_description:  body.long_description,
+        additional_info: body.additional_info, 
         // image_logo: body.image_logo,
         // agent_id: body.agent_id, 
         // product_id: body.product_id
@@ -250,6 +254,9 @@ exports.update = async (req, res) => {
         stay_type_id: body.stay_type,
         contact_number: body.contact_number,
         location_id: body.location_id,
+        short_description: body.short_description,
+        long_description:  body.long_description,
+        additional_info: body.additional_info,
         image_logo: body.image_logo,
         agent_id: body.agent_id, 
         product_id: body.product_id

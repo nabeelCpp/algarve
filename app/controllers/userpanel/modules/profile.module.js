@@ -40,19 +40,30 @@ exports.singleBooking = async (req, res) => {
     return res.send(booking)
 }
 
-exports.removeSubscribe = async (req, res) => {
-    let user = req.user
-    if(user.subscribed == 1){
-        await User.update({subscribed: 0}, {
-            where: {
-                id: user.id
-            }
-        })
-        user.subscribed = 0
-    }
-    return res.send({
-        success: true,
-        message: "User un-subscribed successfully",
-        data: user
-    })
-}
+// exports.removeSubscribe = async (req, res) => {
+//     let user = req.user
+
+//     /**
+//      * Check for subscriber
+//      */
+//     const subscriber  = db.Subscribe.findOne({
+//         where: {
+//             email: user.email
+//         }
+//     })
+//     if(subscriber){
+//         db.Subscribe.destroy({
+//             where: {
+//                 email: body.email
+//             }
+//         })
+//         return res.send({
+//             success: true,
+//             message: "User un-subscribed successfully",
+//         })
+//     }
+//     return res.status(500).send({
+//         success: false,
+//         message: "User not in subscribers list"
+//     })
+// }

@@ -27,7 +27,7 @@ module.exports = function(app) {
     router.get("/bookings", userController.profile.bookings);
     router.put("/bookings/(:id)", userController.profile.singleBooking);
     // Remove subscriber
-    router.delete("/subscribe", userController.profile.removeSubscribe)
+    // router.delete("/subscribe", userController.profile.removeSubscribe)
 
   });
 };

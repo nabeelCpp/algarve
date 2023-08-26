@@ -21,7 +21,7 @@ module.exports = (sequelize, Sequelize) => {
         },
         location : {
             type: Sequelize.STRING, 
-            allowNull: false
+            allowNull: true
         },
         video_link : {
             type: Sequelize.STRING, 
@@ -29,27 +29,27 @@ module.exports = (sequelize, Sequelize) => {
         },
         no_of_guests : {
             type: Sequelize.INTEGER, 
-            allowNull: false
+            allowNull: true
         },
         no_of_pets : {
             type: Sequelize.INTEGER, 
-            allowNull: false
+            allowNull: true
         },
         no_of_adults : {
             type: Sequelize.INTEGER, 
-            allowNull: false
+            allowNull: true
         },
         category_id : {
             type: Sequelize.INTEGER, 
-            allowNull: false
+            allowNull: true
         },
         city : {
             type: Sequelize.STRING, 
-            allowNull: false
+            allowNull: true
         },
         country : {
             type: Sequelize.STRING, 
-            allowNull: false
+            allowNull: true
         },
         features : {
             type: Sequelize.STRING, 
@@ -75,11 +75,11 @@ module.exports = (sequelize, Sequelize) => {
         },
         stay_type : {
             type: Sequelize.STRING, 
-            allowNull: false
+            allowNull: true
         },
         contact_number : {
             type: Sequelize.STRING, 
-            allowNull: false
+            allowNull: true
         },
         short_description : {
             type: Sequelize.STRING, 
