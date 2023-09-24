@@ -6,6 +6,18 @@ const multer = require("multer");
 const fs = require('fs');
 const path = require('path');
 const { listings } = require('../../admin.controller');
+const url = require('url');
+const AWS = require('aws-sdk');
+
+AWS.config.update({
+  accessKeyId: process.env.AWS_ACCESS_KEY_ID,
+  secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY,
+  region: process.env.AWS_REGION
+});
+
+
+const s3 = new AWS.S3();
+
 exports.index = async (req, res) => {
     let id = req.params?.id
     let data = []
@@ -25,10 +37,10 @@ exports.index = async (req, res) => {
                 listing_id: id
             }
         })
-        for (let i = 0; i < gallery.length; i++) {
-            const g = gallery[i].getValues();
-            g.image = `${process.env.BASE_URL}/listings/${listing.uid}/${g.image}`
-        }
+        // for (let i = 0; i < gallery.length; i++) {
+        //     const g = gallery[i].getValues();
+        //     g.image = `${process.env.BASE_URL}/listings/${listing.uid}/${g.image}`
+        // }
         let location = []
         if(listing.location_id){
             location = await City.findByPk(listing.location_id)
@@ -46,10 +58,10 @@ exports.index = async (req, res) => {
                     listing_id: listing.id
                 }
             })
-            for (let i = 0; i < gallery.length; i++) {
-                const g = gallery[i].getValues();
-                g.image = `${process.env.BASE_URL}/listings/${listing.uid}/${g.image}`
-            }
+            // for (let i = 0; i < gallery.length; i++) {
+            //     const g = gallery[i].getValues();
+            //     g.image = `${process.env.BASE_URL}/listings/${listing.uid}/${g.image}`
+            // }
             let category = await Category.findByPk(listing.category_id)
             listing.category = category
             let location = []
@@ -298,208 +310,226 @@ exports.delete = async (req, res) => {
     } catch (error) {
         return publicController.errorHandlingFunc(req, res, error.message);
     }
-    res.send({
-        message: true
-    })
 }
 
 exports.updateGallery = async (req, res) => {
-    let id = req.params.id
-    let listing = await Listings.findByPk(id)
-    if(!listing) {
+    try {
+        let id = req.params.id
+        let listing = await Listings.findByPk(id)
+        if(!listing) {
+            return res.send({
+                success: false,
+                message: "Listing not found"
+            })
+        }
+        const rootDirectory = path.resolve(__dirname);
+        let galleryPath = path.resolve(`${rootDirectory}/../../../../public/`)
+        await req.files.gallery.map(async (file) => {
+            await uploadImageToS3(file, listing, galleryPath)
+            .then((imageUrl) => {
+                console.log('Image uploaded to S3:', imageUrl);
+                Gallery.create({
+                    listing_id: listing.id,
+                    image: imageUrl
+                })
+                /**
+                 * Remove uploaded file!
+                 */
+                fs.unlinkSync(file.path)
+            })
+            .catch((error) => {
+                console.log(error)
+            });
+        })
+
         return res.send({
+           success: true,
+           message: 'Gallery Updated successfully!'
+        })
+    } catch (error) {
+        return res.status(500).send({
             success: false,
-            message: "Listing not found"
+            error: error.message
         })
     }
-    const rootDirectory = path.resolve(__dirname);
-    let galleryPath = `${rootDirectory}/../../../../public/listings/${listing.uid}/`
-    console.log(galleryPath);
-
-    
-    // Check if the directory exists
-    fs.access(galleryPath, fs.constants.F_OK, async (err) => {
-        if (err) {
-            // Create the directory
-            fs.mkdir(galleryPath, { recursive: true }, (err) => {
-                if (err) {
-                    console.error(`Error creating directory: ${err}`);
-                } else {
-                    const storageGallery =   multer.diskStorage({  
-                        destination:  (req, file, callback) => {  
-                          callback(null, galleryPath);
-                        },
-                        filename: (req, file, callback) => {
-                          callback(null, `${Date.now()}-${file.originalname}`);  
-                        }
-                    });
-                    var uploadGallery = multer({ storage : storageGallery}).array('gallery');
-                    let galleryMaxCount = 20;
-                    uploadGallery(req,res,async (err) => {
-                        if(req.files && req.files.length > galleryMaxCount){
-                            return res.status(203).send({
-                                success: false,
-                                message: `Max gallery upload limit is ${galleryMaxCount}`
-                            });
-                        }
-                        if(!req.files){
-                            return res.status(403).send({
-                                success: false,
-                                message: "Min 1 gallery image file is required!"
-                            })
-                        } 
-                        var invalidFileCollection = false;
-                        req.files.forEach(file => {
-                            if(file.mimetype){
-                                const arr = file.mimetype.split('/');
-                                if(arr[0] !== 'image'){
-                                    invalidFileCollection = true;
-                                }
-                            }
-                        });
-                        if(invalidFileCollection){
-                            return res.status(203).send({
-                                success: false,
-                                message: 'Invalid filetype. Only images are allowed'
-                            });
-                        }
-                        if(err) {
-                            return res.status(500).send({
-                                status: false,
-                                message: "Error uploading Gallery.",
-                                err: err
-                            });  
-                        }
-                        // Upload gallery one by one
-                        const galleryFiles = [];
-                        req.files.forEach(async (file) => {
-                            galleryFiles.push(file.filename);
-                        });
-                        galleryFiles.map(g => {
-                            Gallery.create({
-                                listing_id: listing.id,
-                                image: g
-                            })
-                        })
-                
-                        // let resp = await pocRegistration.update({file: galleryFiles.join(',')}, {
-                        //     where: {
-                        //         id: req.params.id
-                        //     }
-                        // });
-                        // if(resp) {
-                        //     // Delete old files.
-                        //     const oldGallery = user.file.split(',');
-                        //     oldGallery.forEach(old => {
-                        //         fs.unlink(`${galleryPath}${old}`, function(err) {
-                        //             if(err && err.code == 'ENOENT') {
-                        //                 console.log("File doesn't exist, won't remove it.");
-                        //             } else if (err) {
-                        //                 console.error("Error occurred while trying to remove file");
-                        //             } else {
-                        //                 console.info(`removed`);
-                        //             }
-                        //         });
-                        //     })
-                        //     return res.status(200).send({
-                        //         status: true,
-                        //         message: "Gallery updated successfully!"
-                        //     });  
-                        // }
-                        return res.status(200).send({
-                            success: true,
-                            message: "Gallery updated successfully!"
-                        });
-                    });
-                }
-            });
-        } else {
-            const storageGallery =   multer.diskStorage({  
-                destination:  (req, file, callback) => {  
-                  callback(null, galleryPath);
-                },
-                filename: (req, file, callback) => {
-                  callback(null, `${Date.now()}-${file.originalname}`);  
-                }
-            });
-            var uploadGallery = multer({ storage : storageGallery}).array('gallery');
-            let galleryMaxCount = 20;
-            uploadGallery(req,res,async (err) => {
-                if(req.files && req.files.length > galleryMaxCount){
-                    return res.status(203).send({
-                        success: false,
-                        message: `Max gallery upload limit is ${galleryMaxCount}`
-                    });
-                }
-                if(!req.files){
-                    return res.status(403).send({
-                        success: false,
-                        message: "Min 1 gallery image file is required!"
-                    })
-                } 
-                var invalidFileCollection = false;
-                req.files.forEach(file => {
-                    if(file.mimetype){
-                        const arr = file.mimetype.split('/');
-                        if(arr[0] !== 'image'){
-                            invalidFileCollection = true;
-                        }
-                    }
-                });
-                if(invalidFileCollection){
-                    return res.status(203).send({
-                        success: false,
-                        message: 'Invalid filetype. Only images are allowed'
-                    });
-                }
-                if(err) {
-                    return res.status(500).send({
-                        status: false,
-                        message: "Error uploading Gallery.",
-                        err: err
-                    });  
-                }
-                // Upload gallery one by one
-                const galleryFiles = [];
-                req.files.forEach(async (file) => {
-                    galleryFiles.push(file.filename);
-                });
-                galleryFiles.map(g => {
-                    Gallery.create({
-                        listing_id: listing.id,
-                        image: g
-                    })
-                })
-        
-                // let resp = await pocRegistration.update({file: galleryFiles.join(',')}, {
-                //     where: {
-                //         id: req.params.id
-                //     }
-                // });
-                // if(resp) {
-                //     // Delete old files.
-                //     const oldGallery = user.file.split(',');
-                //     oldGallery.forEach(old => {
-                //         fs.unlink(`${galleryPath}${old}`, function(err) {
-                //             if(err && err.code == 'ENOENT') {
-                //                 console.log("File doesn't exist, won't remove it.");
-                //             } else if (err) {
-                //                 console.error("Error occurred while trying to remove file");
-                //             } else {
-                //                 console.info(`removed`);
-                //             }
-                //         });
-                //     })
-                //     return res.status(200).send({
-                //         status: true,
-                //         message: "Gallery updated successfully!"
-                //     });  
-                // }
-                return res.status(200).send({
-                    success: true,
-                    message: "Gallery updated successfully!"
-                });
-            });
-        }
-    });
 }
+
+ /**
+ * Remove Image from Gallery
+ */
+exports.deleteGallery = async (req, res) => {
+    try {
+        const id = req.params.id
+        let gallery = await Gallery.findByPk(id)
+        if(!gallery){
+            return res.status(404).send({
+                success: false,
+                message: "Gallery Item not found!"
+            })
+        }
+
+        let listing = await Listings.findByPk(gallery.listing_id)
+        if(!listing){
+            return res.status(404).send({
+                success: false,
+                message: "Listing not found!"
+            }) 
+        }
+
+        /**
+         * Remove from s3 bucket.
+         */
+        // Parse the URL
+        const parsedUrl = url.parse(gallery.image);
+        const pathname = parsedUrl.pathname;
+        const basename = path.basename(pathname);
+        const params = {
+            Bucket: process.env.AWS_BUCKET_NAME,
+            Key: `listings/${listing.uid}/${basename}`,
+        }
+        s3.deleteObject(params, (err, data) => {
+            if (err) {
+                console.error('Error deleting object:', err);
+            } else {
+                console.log('Object deleted successfully');
+            }
+        });
+        Gallery.destroy({
+            where: {
+                id: id
+            }
+        })
+        return res.send({
+            success: true,
+            message: "Gallery item deleted successfully!"
+        })
+    } catch (error) {
+        return publicController.errorHandlingFunc(req, res, error.message);
+    }
+}
+
+
+/**
+ * AWS Upload image to s3 bucket.
+ */
+const uploadImageToS3 = async (file, listing, galleryPath) => {
+    const params = {
+        Bucket: process.env.AWS_BUCKET_NAME,
+        Key: `listings/${listing.uid}/${file.filename+path.extname(file.originalname)}`, // Set the S3 object key
+        Body: fs.createReadStream(galleryPath+'/'+file.filename), // Use the file buffer as the Body
+        ContentType: file.mimetype, // Set the Content-Type based on file type
+    };
+  
+    return new Promise((resolve, reject) => {
+      s3.upload(params, (err, data) => {
+        if (err) {
+            console.log(err)
+          reject(err);
+        } else {
+            console.log(data.Location)
+            // Set the object ACL to 'public-read' to make it public
+            s3.putObjectAcl({
+                Bucket: process.env.AWS_BUCKET_NAME,
+                Key: `listings/${listing.uid}/${file.filename+path.extname(file.originalname)}`, // Specify the same key as used for the upload
+                ACL: 'public-read',
+            }, (aclErr, aclData) => {
+                if (aclErr) {
+                    console.error('Error setting object ACL:', aclErr);
+                } else {
+                    console.log('Object ACL set to public-read:', aclData);
+                }
+            });
+          resolve(data.Location); // The URL of the uploaded image in S3
+        }
+      });
+    });
+  }
+
+//   const uploadImageToS3Test = async (file, listing, galleryPath) => {
+//     const params = {
+//         Bucket: process.env.AWS_BUCKET_NAME,
+//         Key: `listings/${listing.uid}/${file}`, // Set the S3 object key
+//         Body: fs.createReadStream(galleryPath), // Use the file buffer as the Body
+//         ContentType: file.mimetype, // Set the Content-Type based on file type
+//     };
+  
+//     return new Promise((resolve, reject) => {
+//       s3.upload(params, (err, data) => {
+//         if (err) {
+//             console.log(err)
+//           reject(err);
+//         } else {
+//             console.log(data.Location)
+//             // Set the object ACL to 'public-read' to make it public
+//             s3.putObjectAcl({
+//                 Bucket: process.env.AWS_BUCKET_NAME,
+//                 Key: `listings/${listing.uid}/${file}`, // Specify the same key as used for the upload
+//                 ACL: 'public-read',
+//             }, (aclErr, aclData) => {
+//                 if (aclErr) {
+//                     console.error('Error setting object ACL:', aclErr);
+//                 } else {
+//                     console.log('Object ACL set to public-read:', aclData);
+//                 }
+//             });
+//           resolve(data.Location); // The URL of the uploaded image in S3
+//         }
+//       });
+//     });
+//   }
+
+  const removeFilesUploaded = (req) => {
+
+    if(req.files && req.files['gallery']) {
+        let docs = req.files['gallery']
+        docs.forEach(doc => {
+            fs.unlinkSync(doc.path)
+        });
+    }
+}
+
+exports.removeFilesUploaded = (req) => {
+    removeFilesUploaded(req)
+}
+
+// exports.tests3 = async (req, res) => {
+//     const rootDirectory = path.resolve(__dirname);
+//     let galleryPath = path.resolve(`${rootDirectory}/../../../../public/listings/`)
+//     let listings = await Listings.findAll()
+//     await listings.map(async (listing) => {
+//         let galleries = await Gallery.findAll({
+//             where: {
+//                 listing_id: listing.id
+//             }
+//         })
+//         await galleries.map(async (gallery) => {
+//             fs.access(`${galleryPath}/${listing.uid}/${gallery.image}`, fs.constants.F_OK, async (err) => {
+//                 if (err) {
+//                     console.error('File does not exist or is not accessible');
+//                 }else{
+//                     console.log(`${galleryPath}/${listing.uid}/${gallery.image}`)
+//                     await uploadImageToS3Test(gallery.image, listing, `${galleryPath}/${listing.uid}/${gallery.image}`)
+//                     .then((imageUrl) => {
+//                         console.log('Image uploaded to S3:', imageUrl);
+//                         gallery.image = imageUrl
+//                         gallery.save()
+//                         Gallery.create({
+//                             listing_id: listing.id,
+//                             image: imageUrl
+//                         })
+//                         /**
+//                          * Remove uploaded file!
+//                          */
+//                         fs.unlinkSync(`${galleryPath}/${listing.uid}/${gallery.image}`)
+//                     })
+//                     .catch((error) => {
+//                         console.log(error)
+//                     });
+//                 }
+//             });
+//         })
+//     })
+//     return res.send({
+//         success: galleryPath
+//     })
+// }

@@ -97,8 +97,19 @@ exports.listingAvailbilityPerEventId = async (req, res) => {
         }
     }).then(async (response) => {
         let data = response.data
+        const customGenders = [];
+        console.log(data.Data.EventGenderPrices);
+        if(data.Data.EventGenderPrices.length > 0) {
+            for (let i = 0; i < data.Data.EventGenderPrices.length; i++) {
+                const  d = data.Data.EventGenderPrices[i]
+                let obj = {id: d.Id,key: d.AudienceType, value: `${d.AudienceTypeDescription}${d && d.AudienceTypeLabel ?'('+d.AudienceTypeLabel+')':'' }`, price: d.Grossprice, currency: d.Currency, occupancy: d.AudienceTypeOccupancy}
+                customGenders.push(obj)
+            }
+        }
+        data.customGenders = customGenders
         return res.send(response.data)
     }).catch(err => {
+        console.log(err)
         return res.status(503).send({success: false, message: err.response.data.Data.ErrorMessage})
     })
 }
@@ -108,27 +119,33 @@ exports.preBookingEvent = async (req, res) => {
     let eventId = req.params.event_id
     let adults = req.body.Adults
     let children = req.body.Children?req.body.Children:0
+    let body = req.body
+    const audiences = Object.keys(body).map(key => ({
+        AudienceType: key,
+        Quantity: body[key],
+    }));
+    console.log(audiences)
     let random = await publicController.makeid(8)
-    let audiences = []
-    if(children > 0){
-        audiences = [
-            {
-                "AudienceType": "ADULT",
-                "Quantity": adults
-            },
-            {
-                "AudienceType": "Children",
-                "Quantity": children
-            }
-        ]
-    }else{
-        audiences = [
-            {
-                "AudienceType": "ADULT",
-                "Quantity": adults
-            }
-        ]
-    }
+    // let audiences = []
+    // if(children > 0){
+    //     audiences = [
+    //         {
+    //             "AudienceType": "ADULT",
+    //             "Quantity": adults
+    //         },
+    //         {
+    //             "AudienceType": "Children",
+    //             "Quantity": children
+    //         }
+    //     ]
+    // }else{
+    //     audiences = [
+    //         {
+    //             "AudienceType": "ADULT",
+    //             "Quantity": adults
+    //         }
+    //     ]
+    // }
     let data = {
         "EventId": eventId,
         "BookingOperatorCode": `${process.env.PLURALO_PREFIX}${random}`,

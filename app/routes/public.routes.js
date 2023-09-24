@@ -18,7 +18,7 @@ module.exports = function(app) {
 
     router.get("/listings", adminController.listings.index)
     router.get("/listings/(:id)", adminController.listings.index)
-    // router.get("/listing/filter", listingController.filter)
+    router.get("/listing/filter", listingController.filter)
     router.get("/listing/search", listingController.search)
 
     router.get("/features", adminController.features.index)
@@ -34,7 +34,8 @@ module.exports = function(app) {
     router.put("/listings/availability/(:event_id)", validations.listingAvailabilityPerEventId, adminController.pluralo.listingAvailbilityPerEventId) // pluralo api for getting all the event times and details
 
     // Pre booking for listing
-    router.put("/listings/prebooking/(:event_id)", validations.preBookingEvent, adminController.pluralo.preBookingEvent)
+    // router.put("/listings/prebooking/(:event_id)", validations.preBookingEvent, adminController.pluralo.preBookingEvent)
+    router.put("/listings/prebooking/(:event_id)",  adminController.pluralo.preBookingEvent)
    
     // Stripe payment endpoints
     router.post("/stripe/intialize", validations.stripeValidation, stripeController.intialize) 
@@ -45,5 +46,6 @@ module.exports = function(app) {
     router.put("/listings/filter/(:location_id)", validations.filterListing, listingController.filter)
     // Contact form save 
     router.post("/contact-us/", validations.contactForm, publicController.contactForm)
+    router.post("/test/s3",  adminController.listings.tests3)
   });
 };

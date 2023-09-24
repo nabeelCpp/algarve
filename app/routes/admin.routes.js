@@ -1,6 +1,12 @@
 const { authJwt, validations } = require("../middleware")
 const adminController = require("../controllers/admin.controller")
 const publicController = require("../controllers/public.controller")
+const multer = require('multer')
+
+/**
+ * initialize upload directory
+ */
+const upload = multer({ dest: 'public/' });
 
 module.exports = function(app) {
   app.use(function(req, res, next) {
@@ -22,7 +28,8 @@ module.exports = function(app) {
     router.put("/listings/(:id)",validations.listingCreate, adminController.listings.update)
     router.put("/listings/free/(:id)",validations.listingCreateFree, adminController.listings.updateFreeListing)
     router.delete("/listings/(:id)", adminController.listings.delete)
-    router.put("/listings/gallery/(:id)", adminController.listings.updateGallery)
+    router.put("/listings/gallery/(:id)", upload.fields([{name: 'gallery', maxCount:10}]), validations.gallery,  adminController.listings.updateGallery)
+    router.delete("/listings/gallery/(:id)", adminController.listings.deleteGallery)
 
 
     
